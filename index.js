@@ -1,6 +1,28 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const router =  require('./router')
+const cron = require('node-cron');
+const { exec } = require('child_process');
+
+
+
+const heureSauvegarde = '*/1 * * * *';
+
+
+// Planifiez la tâche de sauvegarde à l'heure spécifiée.
+cron.schedule(heureSauvegarde, () => {
+
+  const backupProcess = exec('node ./utils/backup.js');
+
+  backupProcess.stdout.on('data', (data) => {
+    console.log(data);
+  });
+
+  backupProcess.stderr.on('data', (data) => {
+    console.error(data);
+  });
+
+})
 
 
 dotenv.config();
