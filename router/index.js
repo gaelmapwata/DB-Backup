@@ -1,11 +1,11 @@
 const express = require('express');
 const UserController = require('../controllers/UserController'); 
 
-const router =  express.router();
+const router =  express.Router();
 
 
 router.get('/users',UserController.index);
 router.post('/users', UserController.store);
 
 
-export default router;
+module.exports = router;

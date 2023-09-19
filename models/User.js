@@ -1,12 +1,15 @@
-const knex = require('../knexfile');
+const knex = require('knex');
+const knexConfig = require('../knexfile');
+
+const db = knex(knexConfig.development);
 
 class User {
-  static async create({ nom, email }) {
-    return knex('users').insert({ nom, email });
+  static async create({ name, email }) {
+    return db('users').insert({ name, email });
   }
 
   static async getAll() {
-    return knex('users').select('*');
+    return db('users').select('*');
   }
 }
 
