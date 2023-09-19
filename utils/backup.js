@@ -3,16 +3,38 @@ const knexConfig = require('../knexfile');
 const db = knex(knexConfig.development);
 const { exec } = require('child_process');
 const generateName = require ('./generateNameFile');
+const {FILE_PATH , TO_ARCHIVE} = require ('../utils/utilities')
 
 
-// Commande de sauvegarde avec mysqldump
-const mysqldump = 'C:\\laragon\\bin\\mysql\\mysql-8.0.30-winx64\\bin\\mysqldump'
-const commandeSauvegarde = `${mysqldump} --host=${knexConfig.development.connection.host} --user=${knexConfig.development.connection.user} --password=${knexConfig.development.connection.password} ${knexConfig.development.connection.database} > ${generateName.generateNameFile('./backup-Sql')}`;
+// const filePath = process.env.FILE_PATH
 
-exec(commandeSauvegarde, (erreur, stdout, stderr) => {
-  if (erreur) {
+
+// // Commande de sauvegarde avec mysqldump
+// const commandeSauvegarde = `mysqldump --host=${knexConfig.development.connection.host} --user=${knexConfig.development.connection.user} --password=${knexConfig.development.connection.password} ${knexConfig.development.connection.database} > ${generateName.generateNameFile(FILE_PATH, TO_ARCHIVE)}`;
+
+// exec(commandeSauvegarde, (erreur, stdout, stderr) => {
+//   if (erreur) {
+//     console.error(`Erreur lors de la sauvegarde : ${erreur}`);
+//   } else {
+//     console.log('Sauvegarde réussie.');
+//   }
+// });
+
+const backupCommand = async () => {
+  try {
+    const pathDirectory = await generateName.generateNameFile(FILE_PATH, TO_ARCHIVE);
+    const commande = `mysqldump --host=${knexConfig.development.connection.host} --user=${knexConfig.development.connection.user} --password=${knexConfig.development.connection.password} ${knexConfig.development.connection.database} > ${pathDirectory}`;
+    exec(commande, (erreur, stdout, stderr) => {
+    if (erreur) {
     console.error(`Erreur lors de la sauvegarde : ${erreur}`);
-  } else {
+    } else {
     console.log('Sauvegarde réussie.');
+    }
+  });
+  } catch (erreur) {
+    console.error('Erreur lors de la sauvegarde', erreur);
   }
-});
+};
+
+backupCommand();
+
